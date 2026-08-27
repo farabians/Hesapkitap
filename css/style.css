@@ -49,7 +49,6 @@
 	.welcome-row>div{width:100%;margin-right:0;text-align:left;min-width:0;}
 	.welcome-row h1{overflow-wrap:anywhere;}
 	.welcome-row .notification{position:static;}
-	.analysis-menu-toggle{margin-bottom:2%;}
 	.analysis-period{width:max-content;max-width:100%;}
 	.analysis-kpis{grid-template-columns:repeat(2,50%);width:100%;}
 	.analysis-kpi{min-width:0;}
