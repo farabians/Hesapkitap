@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0c10" />
+  <title>Ledgerly | İşletme Paneli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="brand login-brand"><span class="brand-mark"><i data-lucide="sparkles"></i></span><span>Ledgerly</span></div>
+      <div class="login-icon"><i data-lucide="bar-chart-3"></i></div>
+      <p class="eyebrow">İşletme finansı</p>
+      <h1>İşletmeni<br><em>net gör.</em></h1>
+      <p class="login-copy">Satışlarını, giderlerini ve gerçek kârını tek bir sakin ekranda takip et.</p>
+      <button class="button primary google-button" id="loginButton"><span class="google-g">G</span> Google ile devam et</button>
+      <p class="login-note"><i data-lucide="lock-keyhole"></i> Verilerin yalnızca sana ait çalışma alanında tutulur.</p>
+    </div>
+  </section>
+  <div class="app-shell" id="appShell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark"><i data-lucide="sparkles"></i></span><span>Ledgerly</span></div>
+      <div class="profile"><div class="avatar" id="userAvatar">JD</div><div class="profile-info"><strong id="userName">Jason's Store</strong><span id="userEmail">Demo workspace</span></div><button class="icon-button small" id="profileMenu" aria-label="Profil menüsü"><i data-lucide="more-horizontal"></i></button><div class="profile-popover" id="profilePopover" hidden><strong id="profilePopoverName">İşletmem</strong><span id="profilePopoverEmail">Hesabınız</span><button id="profileLogout"><i data-lucide="log-out"></i> Oturumu kapat</button></div></div>
+      <nav>
+        <p class="nav-label">Genel bakış</p>
+        <a class="nav-item active" href="#dashboard" data-target="dashboard"><i data-lucide="layout-dashboard"></i><span>Yönetim Paneli</span></a>
+        <a class="nav-item" href="analysis.html" data-target="analysis"><i data-lucide="chart-no-axes-combined"></i><span>Detaylı Analiz</span></a>
+        <p class="nav-label">Finans</p>
+        <a class="nav-item" href="#transactions" data-target="transactions"><i data-lucide="banknote"></i><span>Günlük Satışlar</span></a>
+        <a class="nav-item" href="#transactions" data-target="transactions"><i data-lucide="receipt"></i><span>Giderler</span></a>
+        <a class="nav-item" href="#transactions" data-target="transactions"><i data-lucide="truck"></i><span>Toptancı / Cari</span></a>
+        <p class="nav-label">Çalışma alanı</p>
+        <a class="nav-item" href="#settings" data-target="settings"><i data-lucide="settings-2"></i><span>Ayarlar</span></a>
+      </nav>
+      <div class="sidebar-bottom"><div class="upgrade"><span class="upgrade-icon"><i data-lucide="zap"></i></span><div><strong>Ledgerly Pro</strong><span>Daha fazlasını keşfet</span></div><i data-lucide="arrow-up-right"></i></div><button class="nav-item logout" id="logoutButton"><i data-lucide="log-out"></i><span>Oturumu Kapat</span></button></div>
+    </aside>
+
+    <main class="main-content" id="dashboard">
+        <header class="topbar"><button class="icon-button menu-toggle" id="menuToggle" aria-label="Menüyü aç"><i data-lucide="menu"></i></button><div class="breadcrumb"><span>Genel bakış</span><i data-lucide="chevron-right"></i><strong>Dashboard</strong></div><div class="top-actions"><label class="search"><i data-lucide="search"></i><input id="searchInput" type="search" placeholder="İşlemlerde ara..." /></label><button class="date-picker" id="datePicker"><i data-lucide="calendar-days"></i><span id="dateRange">Bugün</span><i data-lucide="chevron-down"></i></button><button class="button primary" id="openModal"><i data-lucide="plus"></i><span>Yeni işlem</span></button></div></header>
+        <div class="date-menu" id="dateMenu" hidden><button data-period="today">Bugün</button><button data-period="month">Bu ay</button><button data-period="7">Son 7 gün</button><button data-period="30">Son 30 gün</button><button data-period="90">Son 90 gün</button><button data-period="year">Bu yıl</button><button data-period="last-year">Son bir yıl</button><button data-period="all">Tüm zamanlar</button><div class="date-fields"><label>Başlangıç<input id="filterStart" type="date"></label><label>Bitiş<input id="filterEnd" type="date"></label></div><button class="date-apply" id="applyDateFilter">Tarihi uygula</button></div>
+
+      <section class="welcome-row"><div><p class="eyebrow"><span class="pulse"></span> <span id="currentDate">Bugün</span></p><h1 id="welcomeTitle">Merhaba</h1><p class="muted">İşletmenin finansal nabzı burada.</p></div><button class="icon-button notification" id="notificationButton" aria-label="Bildirimler"><i data-lucide="bell"></i><span></span></button></section>
+
+      <section class="period-summary" aria-label="Dönem özeti"><div class="period-summary-header"><div><h2>Dönem özeti</h2><p class="muted" id="summaryPeriodLabel">Bugünkü hareketler</p></div><div class="period-tabs" id="summaryPeriodTabs"><button class="selected" data-summary-period="daily">Günlük</button><button data-summary-period="weekly">Haftalık</button><button data-summary-period="monthly">Aylık</button><button data-summary-period="yearly">Yıllık</button></div></div><div class="summary-scroll-shell"><button class="summary-scroll-button previous" id="summaryScrollPrevious" aria-label="Önceki kartlar" disabled><i data-lucide="chevron-left"></i></button><div class="summary-cards" id="summaryCards"></div><button class="summary-scroll-button next" id="summaryScrollNext" aria-label="Daha fazla kart"><i data-lucide="chevron-right"></i></button></div></section>
+
+      <section class="kpi-grid">
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon cyan"><i data-lucide="wallet-cards"></i></span><span class="trend positive" id="dailyRevenueTrend">--</span></div><p class="muted">Bugünün satış cirosu</p><h2 id="dailyRevenue">₺0,00</h2><div class="split-bar"><span style="width: 64%"></span><span style="width: 36%"></span></div><div class="legend"><span><i class="dot cyan-bg"></i>Nakit <b id="cashRevenue">₺0</b></span><span><i class="dot violet-bg"></i>Kart <b id="cardRevenue">₺0</b></span></div></article>
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon violet"><i data-lucide="chart-no-axes-combined"></i></span><span class="trend positive" id="monthlyRevenueTrend">--</span></div><p class="muted"><span id="monthlyRevenueLabel">Aylık toplam satış</span></p><h2 id="monthlyRevenue">₺0,00</h2><div class="mini-chart"><span style="height:35%"></span><span style="height:48%"></span><span style="height:42%"></span><span style="height:67%"></span><span style="height:56%"></span><span style="height:78%"></span><span style="height:92%"></span></div><small>Takvim ayı toplamı</small></article>
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon orange"><i data-lucide="arrow-down-to-line"></i></span><span class="trend negative" id="monthlyExpenseTrend">--</span></div><p class="muted">Bu ayki toplam gider</p><h2 id="monthlyExpense">₺0,00</h2><div class="expense-line"><span></span></div><small>Bu ay yapılan giderlerin toplamı</small></article>
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon orange"><i data-lucide="receipt-text"></i></span><span class="status expense-status">Günlük</span></div><p class="muted">Bugünün toplam gideri</p><h2 id="dailyExpense">₺0,00</h2><div class="expense-line"><span id="dailyExpenseProgress"></span></div><small>Bugün yapılan harcamaların toplamı</small></article>
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon cyan"><i data-lucide="calendar-range"></i></span><span class="trend positive">Yıllık</span></div><p class="muted">Bu yılın toplam satışı</p><h2 id="annualRevenue">₺0,00</h2><div class="mini-chart"><span style="height:38%"></span><span style="height:55%"></span><span style="height:46%"></span><span style="height:72%"></span><span style="height:63%"></span><span style="height:81%"></span><span style="height:94%"></span></div><small>Bu yıl elde edilen satış geliri</small></article>
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon violet"><i data-lucide="calendar-minus"></i></span><span class="trend negative">Yıllık</span></div><p class="muted">Bu yılın toplam gideri</p><h2 id="annualExpense">₺0,00</h2><div class="expense-line"><span id="annualExpenseProgress"></span></div><small>Bu yıl yapılan harcamaların toplamı</small></article>
+        <article class="kpi-card profit-card"><div class="card-heading"><span class="kpi-icon green"><i data-lucide="circle-dollar-sign"></i></span><span class="status"><i data-lucide="check"></i> Sağlıklı</span></div><p class="muted">Seçili dönemin net kârı</p><h2 id="netProfit">₺0,00</h2><div class="profit-progress"><span id="profitProgress"></span></div><small id="profitMargin">Kâr marjı hesaplanıyor</small></article>
+        <article class="kpi-card"><div class="card-heading"><span class="kpi-icon green"><i data-lucide="shopping-basket"></i></span><span class="status">Aylık ort.</span></div><p class="muted">Aylık ortalama satış</p><h2 id="averageSale">₺0,00</h2><div class="expense-line profit-line"><span id="averageSaleProgress"></span></div><small id="averageSaleNote">Bu yılın satış toplamının aylık ortalaması</small></article>
+      </section>
+
+      <section class="charts-grid"><article class="panel sales-panel"><div class="panel-header"><div><h3>Satış trendi</h3><p class="muted" id="salesPeriod">Son 7 günün performansı</p></div><div class="segmented chart-range-selector" id="chartRangeSelector"><button class="selected" data-chart-range="7">7 gün</button><button data-chart-range="30">30 gün</button><button data-chart-range="3m">3 ay</button><button data-chart-range="6m">6 ay</button><button data-chart-range="1y">1 yıl</button><button data-chart-range="all">Tüm zamanlar</button></div></div><div class="chart-wrap"><canvas id="salesChart"></canvas></div></article><article class="panel expense-panel"><div class="panel-header"><div><h3>Gider dağılımı</h3><p class="muted">Bu ayın kategorileri</p></div><button class="icon-button small" id="expenseDetails" aria-label="Gider detayları"><i data-lucide="more-horizontal"></i></button></div><div class="donut-wrap"><canvas id="expenseChart"></canvas><div class="donut-total"><strong id="donutTotal">₺0</strong><span>toplam gider</span></div></div><div class="category-list" id="categoryList"></div></article></section>
+
+      <section class="panel transactions-panel" id="transactions"><div class="panel-header"><div><h3>Son işlemler</h3><p class="muted">Finans hareketlerinin tamamı</p></div><button class="text-button" id="showAllTransactions">Tümünü gör <i data-lucide="arrow-up-right"></i></button></div><div class="table-scroll"><table><thead><tr><th>İşlem</th><th>Kategori</th><th>Tarih</th><th>Ödeme</th><th class="align-right">Tutar</th><th></th></tr></thead><tbody id="transactionRows"></tbody></table></div><div class="empty-state" id="emptyState" hidden><i data-lucide="search-x"></i><p>Bu aramaya uyan işlem bulunamadı.</p></div></section>
+      <footer><span>© 2025 Ledgerly</span><span>Verileriniz güvenle saklanır</span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-header"><div><p class="eyebrow">Yeni kayıt</p><h2 id="modalTitle">İşlem ekle</h2></div><button class="icon-button" id="closeModal" aria-label="Kapat"><i data-lucide="x"></i></button></div><form id="transactionForm"><div class="type-toggle"><label><input type="radio" name="type" value="income" checked /><span><i data-lucide="arrow-up-right"></i> Gelir</span></label><label><input type="radio" name="type" value="expense" /><span><i data-lucide="arrow-down-right"></i> Gider</span></label></div><label class="field"><span>Tutar</span><div class="input-prefix"><b>₺</b><input name="amount" type="number" min="0.01" step="0.01" placeholder="0,00" required /></div></label><div class="form-grid"><label class="field"><span>Kategori</span><select name="category"><option>Satış</option><option>Mal alımı</option><option>Kira</option><option>Fatura</option><option>Personel</option><option>Diğer</option></select></label><label class="field"><span>Ödeme yöntemi</span><select name="paymentMethod"><option value="cash">Nakit</option><option value="card">Kart</option></select></label></div><label class="field"><span>Açıklama</span><input name="description" type="text" placeholder="Örn. Gün sonu satışları" /></label><label class="field"><span>Tarih</span><input name="date" type="date" required /></label><button class="button primary submit-button" id="transactionSubmit" type="submit"><i data-lucide="check"></i> İşlemi kaydet</button></form></section></div>
+  <div class="toast" id="toast"><i data-lucide="check-circle-2"></i><span>İşlem kaydedildi.</span></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script type="module" src="../js/app.js"></script>
+</body>
+</html>

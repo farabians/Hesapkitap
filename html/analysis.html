@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detaylı Analiz | İşletme Paneli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark"><i data-lucide="sparkles"></i></span><span>Ledgerly</span></div>
+      <div class="profile"><div class="avatar" id="userAvatar">JD</div><div class="profile-info"><strong id="userName">Jason's Store</strong><span id="userEmail">Demo workspace</span></div><button class="icon-button small" id="profileMenu" aria-label="Profil menüsü"><i data-lucide="more-horizontal"></i></button></div>
+      <nav>
+        <p class="nav-label">Genel bakış</p>
+        <a class="nav-item" href="index.html"><i data-lucide="layout-dashboard"></i><span>Yönetim Paneli</span></a>
+        <a class="nav-item active" href="analysis.html"><i data-lucide="chart-no-axes-combined"></i><span>Detaylı Analiz</span></a>
+        <p class="nav-label">Finans</p>
+        <a class="nav-item" href="index.html#transactions"><i data-lucide="banknote"></i><span>Günlük Satışlar</span></a>
+        <a class="nav-item" href="index.html#transactions"><i data-lucide="receipt"></i><span>Giderler</span></a>
+        <a class="nav-item" href="index.html#transactions"><i data-lucide="truck"></i><span>Toptancı / Cari</span></a>
+        <p class="nav-label">Çalışma alanı</p>
+        <a class="nav-item" href="index.html#settings"><i data-lucide="settings-2"></i><span>Ayarlar</span></a>
+      </nav>
+      <div class="sidebar-bottom"><div class="upgrade"><span class="upgrade-icon"><i data-lucide="zap"></i></span><div><strong>Ledgerly Pro</strong><span>Daha fazlasını keşfet</span></div><i data-lucide="arrow-up-right"></i></div><a class="nav-item logout" href="index.html"><i data-lucide="log-out"></i><span>Oturumu Kapat</span></a></div>
+    </aside>
+    <main class="main-content analysis-page analysis-standalone" id="analysisPage">
+      <div class="analysis-hero"><div><p class="eyebrow"><span class="pulse"></span> İşletme zekâsı</p><h1>Detaylı analiz</h1><p class="muted">Verilerindeki eğilimleri, güçlü noktaları ve gelişim fırsatlarını birlikte incele.</p></div><div class="analysis-period"><i data-lucide="calendar-range"></i><span id="analysisPeriodLabel">Bu yıl</span></div></div>
+      <div class="analysis-tabs" id="analysisTabs"><button class="selected" data-analysis-period="daily">Günlük</button><button data-analysis-period="weekly">Haftalık</button><button data-analysis-period="monthly">Aylık</button><button data-analysis-period="yearly">Yıllık</button></div>
+      <div class="analysis-kpis" id="analysisKpis"></div><div class="analysis-extra" id="analysisExtra"></div>
+      <div class="analysis-grid"><article class="panel analysis-breakdown"><div class="panel-header"><div><h3>Gelir ve gider dengesi</h3><p class="muted">Seçilen dönemin finansal özeti</p></div></div><div class="balance-bars" id="analysisBalance"></div><div class="analysis-stat-row" id="analysisStats"></div></article><article class="panel recommendation-panel"><div class="panel-header"><div><h3>Akıllı öneriler</h3><p class="muted">İşletme verilerine göre</p></div><span class="analysis-badge"><i data-lucide="sparkles"></i> Canlı</span></div><div class="recommendation-list" id="recommendationList"></div></article></div>
+      <article class="panel category-analysis"><div class="panel-header"><div><h3>Gider kategorileri</h3><p class="muted">Harcama paylarının dağılımı</p></div></div><div class="category-analysis-list" id="analysisCategories"></div></article>
+    </main>
+  </div>
+  <script type="module" src="../js/analysis.js"></script>
+</body>
+</html>
