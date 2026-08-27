@@ -31,3 +31,43 @@
 .profit-line span{background:var(--green)}
 .main-content{position:relative}.date-menu{right:104px;top:72px}
 @media(max-width:760px){.date-menu{right:16px;top:118px}}
+
+@media(max-width:48rem){
+	.main-content{width:100%;min-width:0;overflow:hidden}
+	.topbar{width:100%;flex-wrap:wrap;gap:5%;}
+	.breadcrumb{min-width:0;max-width:100%}
+	.top-actions{left:0;right:0;width:100%;min-width:0;gap:3%;}
+	.top-actions{top:auto;}
+	.top-actions .search{flex:1 1 0;min-width:0;width:70%}
+	.top-actions .button{flex:0 0 15%;min-width:0}
+	.charts-grid,.analysis-grid{grid-template-columns:100%;width:100%;min-width:0}
+	.charts-grid>* , .analysis-grid>*{width:100%;min-width:0}
+	.panel{width:100%;min-width:0}
+	.chart-wrap,.donut-wrap{width:100%;min-width:0}
+	.analysis-hero{width:100%;}
+	.welcome-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:4%;margin-top:4%;}
+	.welcome-row>div{width:100%;margin-right:0;text-align:left;min-width:0;}
+	.welcome-row h1{overflow-wrap:anywhere;}
+	.welcome-row .notification{position:static;}
+	.analysis-menu-toggle{margin-bottom:2%;}
+	.analysis-period{width:max-content;max-width:100%;}
+	.analysis-kpis{grid-template-columns:repeat(2,50%);width:100%;}
+	.analysis-kpi{min-width:0;}
+	.transaction-filters{width:100%;}
+	.transaction-filters label{flex:1 1 30%;min-width:0;}
+	.transaction-filters select{width:100%;min-width:0;}
+	.table-scroll{width:100%;max-width:100%;overflow-x:auto;}
+}
+
+@media(max-width:30rem){
+	.main-content{padding-left:4%;padding-right:4%;}
+	.top-actions .button{flex-basis:18%;}
+	.analysis-kpis{grid-template-columns:100%;}
+	.period-summary-header{align-items:stretch;}
+	.period-tabs{width:100%;}
+	.period-tabs button{flex:1 1 25%;padding-left:2%;padding-right:2%;}
+	.analysis-tabs{width:100%;overflow-x:auto;}
+	.analysis-tabs button{flex:1 0 25%;}
+	.transaction-filters label{flex-basis:45%;}
+	.filter-clear{width:100%;justify-content:center;}
+}
