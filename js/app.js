@@ -82,7 +82,121 @@ function render() { renderKpis(); updateExtendedKpis(); renderSummaryCards(); up
 function setTrend(selector, current, previous, higherIsBetter = true) { const element = $(selector); if (!element) return; if (!previous) { element.className = `trend ${current ? 'positive' : 'negative'}`; element.innerHTML = `${current ? 'Yeni' : '0.00%'} <i data-lucide="${current ? 'arrow-up-right' : 'minus'}"></i>`; lucide.createIcons(); return; } const change = (current - previous) / previous * 100; const direction = change >= 0 ? 'arrow-up-right' : 'arrow-down-right'; const favorable = higherIsBetter ? change >= 0 : change <= 0; element.className = `trend ${favorable ? 'positive' : 'negative'}`; element.innerHTML = `${change >= 0 ? '+' : ''}${change.toFixed(2)}% <i data-lucide="${direction}"></i>`; lucide.createIcons(); }
 function updateExtendedKpis() { const data = totals(); const currentMonth = new Intl.DateTimeFormat('tr-TR', { month:'long' }).format(new Date()); $('#monthlyRevenue').textContent = money(data.calendarMonthRevenue); $('#monthlyExpense').textContent = money(data.calendarMonthExpense); $('#monthlyRevenueLabel').textContent = `${currentMonth[0].toLocaleUpperCase('tr-TR')}${currentMonth.slice(1)} ayı satışları`; $('#dailyExpense').textContent = money(data.dailyExpense); $('#annualRevenue').textContent = money(data.annualRevenue); $('#annualExpense').textContent = money(data.annualExpense); $('#averageSale').textContent = money(data.annualAverageMonthlyRevenue); $('#averageSaleProgress').style.width = `${data.annualRevenue ? data.annualAverageMonthlyRevenue / data.annualRevenue * 100 : 0}%`; const dailyRevenue = data.cash + data.card; $('#dailyExpenseProgress').style.width = `${dailyRevenue ? Math.min(100, data.dailyExpense / dailyRevenue * 100) : (data.dailyExpense ? 100 : 0)}%`; $('#annualExpenseProgress').style.width = `${data.annualRevenue ? Math.min(100, data.annualExpense / data.annualRevenue * 100) : (data.annualExpense ? 100 : 0)}%`; setTrend('#dailyRevenueTrend', data.dailyRevenue, data.yesterdayRevenue); setTrend('#monthlyRevenueTrend', data.calendarMonthRevenue, data.previousMonthRevenue); setTrend('#monthlyExpenseTrend', data.calendarMonthExpense, data.previousMonthExpense, false); }
 function renderKpis() { const data = totals(); $('#dailyRevenue').textContent = money(data.cash + data.card); $('#cashRevenue').textContent = shortMoney(data.cash); $('#cardRevenue').textContent = shortMoney(data.card); $('#netProfit').textContent = money(data.profit); $('#donutTotal').textContent = shortMoney(data.expense); $('#profitMargin').textContent = data.revenue ? `Kâr marjı %${Math.round(data.profit / data.revenue * 100)}` : 'Kâr marjı hesaplanıyor'; $('#profitProgress').style.width = `${Math.max(5, Math.min(100, data.revenue ? data.profit / data.revenue * 100 : 5))}%`; }
-function renderTableOld() { const term = $('#searchInput').value.toLocaleLowerCase('tr'); const rows = transactions.filter(isInFilter).filter((item) => `${item.description} ${item.category}`.toLocaleLowerCase('tr').includes(term)).sort((a,b) => b.date - a.date); $('#emptyState').hidden = rows.length > 0; $('#transactionRows').innerHTML = rows.map((item) => `<tr><td><div class="transaction-name"><span class="transaction-icon ${item.type === 'income' ? 'income-icon' : 'expense-icon'}"><i data-lucide="${item.type === 'income' ? 'arrow-up-right' : 'arrow-down-right'}"></i></span>${item.description || (item.type === 'income' ? 'Satış' : 'Gider')}</div></td><td><span class="badge">${item.category}</span></td><td>${dateText(item.date)}</td><td>${item.paymentMethod === 'card' ? 'Kart' : 'Nakit'}</td><td class="align-right ${item.type === 'income' ? 'amount-income' : 'amount-expense'}">${item.type === 'income' ? '+' : '-'}${money(item.amount)}</td><td class="align-right"><button class="delete-button" data-id="${item.id}" aria-label="İşlemi sil"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); lucide.createIcons(); document.querySelectorAll('.delete-button').forEach((button) => button.addEventListener('click', () => removeTransaction(button.dataset.id))); }
+function renderTableOld() { const term = $('#searchInput').value.toLocaleLowerCase('tr'); const rows = [...transactions].filter(isInFilter).filter((item) => `${item.description} ${item.category}`.toLocaleLowerCase('tr').includes(term)).sort((a,b) => b.date - a.date); $('#emptyState').hidden = rows.length > 0; $('#transactionRows').innerHTML = rows.map((item) => `<tr><td><div class="transaction-name"><span class="transaction-icon ${item.type === 'income' ? 'income-icon' : 'expense-icon'}"><i data-lucide="${item.type === 'income' ? 'arrow-up-right' : 'arrow-down-right'}"></i></span>${item.description || (item.type === 'income' ? 'Satış' : 'Gider')}</div></td><td><span class="badge">${item.category}</span></td><td>${dateText(item.date)}</td><td>${item.paymentMethod === 'card' ? 'Kart' : 'Nakit'}</td><td class="align-right ${item.type === 'income' ? 'amount-income' : 'amount-expense'}">${item.type === 'income' ? '+' : '-'}${money(item.amount)}</td><td class="align-right"><button class="delete-button" data-id="${item.id}" aria-label="İşlemi sil"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); lucide.createIcons(); document.querySelectorAll('.delete-button').forEach((button) => button.addEventListener('click', () => removeTransaction(button.dataset.id))); }
+
+function getExportRangeTransactions(range = 'all') {
+  const exported = [...transactions].filter((item) => item && item.date instanceof Date && !Number.isNaN(item.date.getTime()));
+  if (range === 'month') {
+    const end = new Date();
+    const start = new Date(end.getFullYear(), end.getMonth() - 1, end.getDate(), 0, 0, 0);
+    return exported.filter((item) => item.date >= start && item.date <= end).sort((a, b) => a.date - b.date);
+  }
+  if (range === 'custom') {
+    if (!filterStart || !filterEnd) {
+      showToast('Önce özel tarih aralığı seçin.');
+      return null;
+    }
+    return exported.filter((item) => item.date >= filterStart && item.date <= filterEnd).sort((a, b) => a.date - b.date);
+  }
+  if (range === 'current') {
+    return exported.filter(isInFilter).sort((a, b) => a.date - b.date);
+  }
+  return exported.sort((a, b) => a.date - b.date);
+}
+
+function exportTransactionsPdf(range = 'all') {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    showToast('PDF kütüphanesi yüklenemedi.');
+    return;
+  }
+
+  const rows = getExportRangeTransactions(range);
+  if (!rows || rows.length === 0) {
+    showToast('PDF için uygun işlem bulunamadı.');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const rangeLabelMap = { all: 'Tüm zamanlar', month: 'Son 1 ay', custom: 'İstediğim tarih aralığı', current: 'Geçerli filtre' };
+  const typeLabelMap = { income: 'Gelir', expense: 'Gider' };
+
+  doc.setFillColor(16, 17, 25);
+  doc.rect(0, 0, pageWidth, 60, 'F');
+  doc.setTextColor(244, 245, 247);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('Ledgerly - İşlem Raporu', 40, 32);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(186, 191, 204);
+  doc.text(`Dönem: ${rangeLabelMap[range] || 'Tüm zamanlar'}`, 40, 48);
+  doc.text(`Toplam kayıt: ${rows.length}`, 420, 48);
+
+  const tableRows = rows.map((item, index) => [
+    index + 1,
+    typeLabelMap[item.type] || 'İşlem',
+    item.description || 'Açıklama yok',
+    item.category || '-',
+    new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(item.date),
+    item.paymentMethod === 'card' ? 'Kart' : 'Nakit',
+    `${item.type === 'income' ? '+' : '-'}${money(item.amount)}`
+  ]);
+
+  doc.setTextColor(24, 24, 32);
+  doc.autoTable({
+    head: [['No', 'Tür', 'Açıklama', 'Kategori', 'Tarih', 'Ödeme', 'Tutar']],
+    body: tableRows,
+    startY: 76,
+    theme: 'grid',
+    styles: {
+      fontSize: 8,
+      textColor: [30, 30, 30],
+      lineColor: [220, 224, 232],
+      lineWidth: 0.3,
+      overflow: 'linebreak'
+    },
+    headStyles: {
+      fillColor: [89, 216, 255],
+      textColor: [12, 14, 20],
+      fontStyle: 'bold'
+    },
+    bodyStyles: {
+      fillColor: [255, 255, 255]
+    },
+    alternateRowStyles: {
+      fillColor: [246, 248, 251]
+    },
+    margin: { left: 40, right: 40 },
+    didParseCell: (data) => {
+      if (data.section === 'body' && data.column.index === 1) {
+        const value = data.cell.raw;
+        data.cell.styles.textColor = value === 'Gelir' ? [15, 166, 100] : [255, 113, 128];
+        data.cell.styles.fontStyle = 'bold';
+      }
+    }
+  });
+
+  const totalIncome = rows.filter((item) => item.type === 'income').reduce((sum, item) => sum + Number(item.amount), 0);
+  const totalExpense = rows.filter((item) => item.type === 'expense').reduce((sum, item) => sum + Number(item.amount), 0);
+  const net = totalIncome - totalExpense;
+  const summaryY = doc.lastAutoTable.finalY + 18;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('Özet', 40, summaryY);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text(`Toplam gelir: ${money(totalIncome)}`, 40, summaryY + 18);
+  doc.text(`Toplam gider: ${money(totalExpense)}`, 40, summaryY + 32);
+  doc.text(`Net sonuç: ${money(net)}`, 40, summaryY + 46);
+
+  const fileName = `ledgerly-islemler-${range}-${new Date().toISOString().slice(0, 10)}.pdf`;
+  doc.save(fileName);
+  showToast('PDF hazırlandı ve indirildi.');
+}
+
 function renderCharts() { const today = new Date(); const chartDates = Array.from({ length:chartDays }, (_, index) => new Date(today.getFullYear(), today.getMonth(), today.getDate() - chartDays + 1 + index)); const labels = chartDates.map((date) => new Intl.DateTimeFormat('tr-TR', { day:'numeric', month:'short' }).format(date)); const values = chartDates.map((date) => transactions.filter((item) => item.type === 'income' && sameDay(item.date, date)).reduce((sum, item) => sum + Number(item.amount), 0)); const categories = ['Mal alımı','Fatura','Kira','Personel','Diğer']; const categoryValues = categories.map((category) => transactions.filter((item) => item.type === 'expense' && item.category === category).reduce((sum, item) => sum + Number(item.amount), 0)); const colors = ['#a58bff','#ffae61','#59d8ff','#57dda5','#ff7180']; if (salesChart) salesChart.destroy(); if (expenseChart) expenseChart.destroy(); salesChart = new Chart($('#salesChart'), { type:'line', data:{ labels, datasets:[{ data:values, borderColor:'#59d8ff', backgroundColor:'rgba(89,216,255,.12)', fill:true, tension:.42, pointRadius:3, pointBackgroundColor:'#59d8ff', borderWidth:2 }] }, options: chartOptions('₺') }); expenseChart = new Chart($('#expenseChart'), { type:'doughnut', data:{ labels:categories, datasets:[{ data:categoryValues.some(Boolean) ? categoryValues : [1,1,1,1,1], backgroundColor:colors, borderWidth:0, hoverOffset:4 }] }, options:{ responsive:true, maintainAspectRatio:false, cutout:'76%', plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(context) => ` ${money(context.raw)}` } } } } }); $('#salesPeriod').textContent = `Son ${chartDays} günün performansı`; $('#categoryList').innerHTML = categories.map((category,index) => `<div class="category-item"><i style="background:${colors[index]}"></i>${category}<b>${shortMoney(categoryValues[index])}</b></div>`).join(''); }
 function chartOptions(prefix) { return { responsive:true, maintainAspectRatio:false, scales:{ x:{ grid:{ display:false }, ticks:{ color:'#696f83', font:{size:10} } }, y:{ grid:{ color:'rgba(255,255,255,.06)' }, ticks:{ color:'#696f83', font:{size:10}, callback:(value) => `${prefix}${value/1000}k` } } }, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(context) => ` ${money(context.raw)}` }, displayColors:false } } }; }
 function openEditModal(id) { const item = transactions.find((transaction) => transaction.id === id); if (!item) return; editingTransactionId = id; const form = $('#transactionForm'); form.elements.type.value = item.type; form.elements.amount.value = item.amount; form.elements.paymentMethod.value = item.paymentMethod; form.elements.description.value = item.description || ''; form.elements.date.value = dateInputValue(item.date); const categoryOption = [...form.elements.category.options].find((option) => option.value === item.category); const customCategory = form.elements.customCategory; if (categoryOption) { form.elements.category.value = item.category; if (customCategory) customCategory.value = ''; } else if (customCategory) { customCategory.value = item.category || ''; customCategory.dispatchEvent(new Event('input')); } $('#modalTitle').textContent = 'İşlemi düzenle'; $('#transactionSubmit').innerHTML = '<i data-lucide="check"></i> Değişiklikleri kaydet'; $('#modalBackdrop').hidden = false; lucide.createIcons(); }
@@ -96,6 +210,13 @@ $('#notificationButton').addEventListener('click', () => showToast('Yeni bildiri
 $('#datePicker').addEventListener('click', () => { $('#dateMenu').hidden = !$('#dateMenu').hidden; }); document.querySelectorAll('#dateMenu button[data-period]').forEach((button) => button.addEventListener('click', () => { const period = button.dataset.period; const today = new Date(); const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59); dateMode = period; filterEnd = period === 'all' ? null : endOfToday; if (period === 'month') filterStart = new Date(today.getFullYear(), today.getMonth(), 1); else if (period === 'year') filterStart = new Date(today.getFullYear(), 0, 1); else if (period === 'last-year') filterStart = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate()); else if (period === 'all') filterStart = null; else filterStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - Number(period) + 1); $('#dateRange').textContent = button.textContent; $('#dateMenu').hidden = true; if (['7','30','90'].includes(period)) { chartDays = Number(period); $('#chart7').classList.toggle('selected', chartDays === 7); $('#chart30').classList.toggle('selected', chartDays === 30); } else { chartDays = period === 'last-year' || period === 'all' || period === 'year' ? 30 : 7; $('#chart7').classList.toggle('selected', chartDays === 7); $('#chart30').classList.toggle('selected', chartDays === 30); } render(); showToast(`Aktif dönem: ${button.textContent}`); })); $('#applyDateFilter').addEventListener('click', () => { const start = $('#filterStart').value; const end = $('#filterEnd').value; if (!start || !end || start > end) { showToast('Başlangıç ve bitiş tarihlerini kontrol edin.'); return; } dateMode = 'custom'; filterStart = new Date(`${start}T00:00:00`); filterEnd = new Date(`${end}T23:59:59`); $('#dateRange').textContent = `${dateText(filterStart)} - ${dateText(filterEnd)}`; $('#dateMenu').hidden = true; render(); showToast('Özel tarih aralığı uygulandı.'); });
 $('#chart7')?.addEventListener('click', () => { chartDays = 7; $('#chart7').classList.add('selected'); $('#chart30').classList.remove('selected'); renderCharts(); }); $('#chart30')?.addEventListener('click', () => { chartDays = 30; $('#chart30').classList.add('selected'); $('#chart7').classList.remove('selected'); renderCharts(); });
 $('#expenseDetails').addEventListener('click', () => $('#transactions').scrollIntoView({ behavior:'smooth', block:'start' })); $('#showAllTransactions').addEventListener('click', () => { $('#searchInput').value = ''; renderTable(); $('#transactions').scrollIntoView({ behavior:'smooth', block:'start' }); });
+$('#pdfExportButton').addEventListener('click', (event) => { event.stopPropagation(); $('#pdfExportMenu').hidden = !$('#pdfExportMenu').hidden; });
+document.addEventListener('click', (event) => { if (!event.target.closest('.pdf-export-wrap')) $('#pdfExportMenu').hidden = true; });
+document.querySelectorAll('#pdfExportMenu button[data-export-range]').forEach((button) => button.addEventListener('click', () => {
+  const range = button.dataset.exportRange;
+  $('#pdfExportMenu').hidden = true;
+  exportTransactionsPdf(range);
+}));
 document.querySelectorAll('.nav-item[data-target]').forEach((item) => item.addEventListener('click', (event) => { const target = item.dataset.target; if (target === 'settings') { event.preventDefault(); showToast('Ayarlar bölümü yakında aktif olacak.'); return; } if (target === 'analysis') return; document.querySelectorAll('.nav-item[data-target]').forEach((navItem) => navItem.classList.remove('active')); item.classList.add('active'); $('#sidebar').classList.remove('open'); }));
 $('#loginButton').addEventListener('click', async () => {
   try {
@@ -120,4 +241,4 @@ summaryCards.addEventListener('pointercancel', () => { isSummaryDragging = false
 const todayDateOption = document.querySelector('#dateMenu button[data-period="today"]');
 if (todayDateOption) { todayDateOption.addEventListener('click', () => { const today = new Date(); dateMode = 'today'; filterStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()); filterEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59); $('#dateRange').textContent = 'Bugün'; $('#dateMenu').hidden = true; render(); showToast('Aktif dönem: Bugün'); }); }
 
-function renderTable() { const term = $('#searchInput').value.toLocaleLowerCase('tr'); const type = $('#filterType')?.value || 'all'; const category = $('#filterCategory')?.value || 'all'; const payment = $('#filterPayment')?.value || 'all'; const categories = [...new Set(transactions.map((item) => item.category).filter(Boolean))].sort((a,b) => a.localeCompare(b, 'tr')); if ($('#filterCategory')) { $('#filterCategory').innerHTML = '<option value="all">Tüm kategoriler</option>' + categories.map((item) => `<option value="${item}">${item}</option>`).join(''); $('#filterCategory').value = category; } const rows = transactions.filter(isInFilter).filter((item) => (type === 'all' || item.type === type) && (category === 'all' || item.category === category) && (payment === 'all' || item.paymentMethod === payment)).filter((item) => `${item.description} ${item.category}`.toLocaleLowerCase('tr').includes(term)).sort((a,b) => b.date - a.date); $('#emptyState').hidden = rows.length > 0; $('#transactionRows').innerHTML = rows.map((item) => `<tr><td><div class="transaction-name"><span class="transaction-icon ${item.type === 'income' ? 'income-icon' : 'expense-icon'}"><i data-lucide="${item.type === 'income' ? 'arrow-up-right' : 'arrow-down-right'}"></i></span>${item.description || (item.type === 'income' ? 'Satış' : 'Gider')}</div></td><td><span class="badge">${item.category}</span></td><td>${dateText(item.date)}</td><td>${item.paymentMethod === 'card' ? 'Kart' : 'Nakit'}</td><td class="align-right ${item.type === 'income' ? 'amount-income' : 'amount-expense'}">${item.type === 'income' ? '+' : '-'}${money(item.amount)}</td><td class="align-right"><button class="edit-button" data-id="${item.id}" aria-label="İşlemi düzenle"><i data-lucide="pencil"></i></button><button class="delete-button" data-id="${item.id}" aria-label="İşlemi sil"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); lucide.createIcons(); document.querySelectorAll('.edit-button').forEach((button) => button.addEventListener('click', () => openEditModal(button.dataset.id))); document.querySelectorAll('.delete-button').forEach((button) => button.addEventListener('click', () => removeTransaction(button.dataset.id))); }
+function renderTable() { const term = $('#searchInput').value.toLocaleLowerCase('tr'); const type = $('#filterType')?.value || 'all'; const category = $('#filterCategory')?.value || 'all'; const payment = $('#filterPayment')?.value || 'all'; const categories = [...new Set(transactions.map((item) => item.category).filter(Boolean))].sort((a,b) => a.localeCompare(b, 'tr')); if ($('#filterCategory')) { $('#filterCategory').innerHTML = '<option value="all">Tüm kategoriler</option>' + categories.map((item) => `<option value="${item}">${item}</option>`).join(''); $('#filterCategory').value = category; } const rows = [...transactions].filter(isInFilter).filter((item) => (type === 'all' || item.type === type) && (category === 'all' || item.category === category) && (payment === 'all' || item.paymentMethod === payment)).filter((item) => `${item.description} ${item.category}`.toLocaleLowerCase('tr').includes(term)).sort((a,b) => b.date - a.date); $('#transactionCount').textContent = rows.length.toLocaleString('tr-TR'); $('#emptyState').hidden = rows.length > 0; $('#transactionRows').innerHTML = rows.map((item, index) => `<tr><td>${rows.length - index}</td><td><div class="transaction-name"><span class="transaction-icon ${item.type === 'income' ? 'income-icon' : 'expense-icon'}"><i data-lucide="${item.type === 'income' ? 'arrow-up-right' : 'arrow-down-right'}"></i></span>${item.description || (item.type === 'income' ? 'Satış' : 'Gider')}</div></td><td><span class="badge">${item.category}</span></td><td>${dateText(item.date)}</td><td>${item.paymentMethod === 'card' ? 'Kart' : 'Nakit'}</td><td class="align-right ${item.type === 'income' ? 'amount-income' : 'amount-expense'}">${item.type === 'income' ? '+' : '-'}${money(item.amount)}</td><td class="align-right"><button class="edit-button" data-id="${item.id}" aria-label="İşlemi düzenle"><i data-lucide="pencil"></i></button><button class="delete-button" data-id="${item.id}" aria-label="İşlemi sil"><i data-lucide="trash-2"></i></button></td></tr>`).join(''); lucide.createIcons(); document.querySelectorAll('.edit-button').forEach((button) => button.addEventListener('click', () => openEditModal(button.dataset.id))); document.querySelectorAll('.delete-button').forEach((button) => button.addEventListener('click', () => removeTransaction(button.dataset.id))); }
