@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" href="../assets/logo.png" />
   <meta name="theme-color" content="#0b0c10" />
   <title>Ledgerly | İşletme Paneli</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,18 +17,39 @@
   <div class="ambient ambient-two"></div>
   <section class="login-screen" id="loginScreen">
     <div class="login-card">
-      <div class="brand login-brand"><span class="brand-mark"><i data-lucide="sparkles"></i></span><span>Ledgerly</span></div>
-      <div class="login-icon"><i data-lucide="bar-chart-3"></i></div>
-      <p class="eyebrow">İşletme finansı</p>
-      <h1>İşletmeni<br><em>net gör.</em></h1>
-      <p class="login-copy">Satışlarını, giderlerini ve gerçek kârını tek bir sakin ekranda takip et.</p>
-      <button class="button primary google-button" id="loginButton"><span class="google-g">G</span> Google ile devam et</button>
-      <p class="login-note"><i data-lucide="lock-keyhole"></i> Verilerin yalnızca sana ait çalışma alanında tutulur.</p>
+      <div class="brand login-brand">
+        <span class="brand-mark"><img src="../assets/logo.png" alt="Ledgerly" /></span>
+        <span>Ledgerly</span>
+      </div>
+
+      <div class="login-copy-wrap">
+        <p class="eyebrow-login">İşletme kontrol paneli</p>
+        <h1 class="login-title">Gelir ve gider akışınızı yönetin.</h1>
+        <p class="login-subtitle">Anlık görünüm, güvenli veri saklama ve net kararlar.</p>
+      </div>
+
+      <div class="google-signin-wrap">
+        <button class="button primary google-button" id="loginButton" type="button" style="background:linear-gradient(180deg, rgba(247,247,249,.96), rgba(232,234,238,.92)) !important; border-color:rgba(255,255,255,.12) !important; box-shadow:inset 0 1px rgba(255,255,255,.9), 0 10px 24px rgba(0,0,0,.12) !important; color:#1f2329 !important;">
+          <span class="google-logo" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img" aria-label="Google logo">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.7 1.22 9.2 3.63l6.85-6.85C35.94 2.02 30.5 0 24 0 14.64 0 6.59 5.38 2.57 13.22l7.98 6.19C12.06 14.43 17.46 9.5 24 9.5z"></path>
+              <path fill="#4285F4" d="M46.5 24.5c0-1.6-.14-3.13-.4-4.6H24v8.7h12.7c-.55 2.97-2.2 5.48-4.7 7.16l7.6 5.9c4.44-4.1 7.1-10.13 7.1-17.16z"></path>
+              <path fill="#FBBC05" d="M32 40.2c-2.7 1.8-6.16 2.8-8 2.8-6.54 0-12.08-4.3-14.05-10.07l-8.1 6.3C4.96 43.8 13.38 48 24 48c7.08 0 13.02-2.34 17.5-6.35l-9.5-1.45z"></path>
+              <path fill="#34A853" d="M10 33.9c-1.2-2.02-1.9-4.29-1.9-6.9s.7-4.88 1.9-6.9L2.57 13.2C.9 16.42 0 20.08 0 24c0 3.92.9 7.58 2.57 10.8l7.43-1.9z"></path>
+            </svg>
+          </span>
+          <span>Google ile giriş yap</span>
+        </button>
+      </div>
+
+      <div class="login-meta">
+        <p><i data-lucide="lock-keyhole"></i> Verileriniz güvenli şekilde saklanır.</p>
+      </div>
     </div>
   </section>
   <div class="app-shell" id="appShell" hidden>
     <aside class="sidebar" id="sidebar">
-      <div class="brand"><span class="brand-mark"><i data-lucide="sparkles"></i></span><span>Ledgerly</span></div>
+      <div class="brand"><span class="brand-mark"><img src="../assets/logo.png" alt="Ledgerly" /></span><span>Ledgerly</span></div>
       <div class="profile"><div class="avatar" id="userAvatar">JD</div><div class="profile-info"><strong id="userName">Jason's Store</strong><span id="userEmail">Demo workspace</span></div><button class="icon-button small" id="profileMenu" aria-label="Profil menüsü"><i data-lucide="more-horizontal"></i></button><div class="profile-popover" id="profilePopover" hidden><strong id="profilePopoverName">İşletmem</strong><span id="profilePopoverEmail">Hesabınız</span><button id="profileLogout"><i data-lucide="log-out"></i> Oturumu kapat</button></div></div>
       <nav>
         <p class="nav-label">Genel bakış</p>
