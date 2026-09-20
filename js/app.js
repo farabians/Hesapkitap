@@ -104,7 +104,23 @@ function getExportRangeTransactions(range = 'all') {
   return exported.sort((a, b) => a.date - b.date);
 }
 
-function exportTransactionsPdf(range = 'all') {
+let pdfFontPromise;
+function loadPdfFont() {
+  if (!pdfFontPromise) {
+    pdfFontPromise = fetch('https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/NotoSans%5Bwdth,wght%5D.ttf').then((response) => {
+      if (!response.ok) throw new Error('PDF font yüklenemedi.');
+      return response.arrayBuffer();
+    }).then((buffer) => {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let index = 0; index < bytes.length; index += 1) binary += String.fromCharCode(bytes[index]);
+      return btoa(binary);
+    });
+  }
+  return pdfFontPromise;
+}
+
+async function exportTransactionsPdf(range = 'all') {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     showToast('PDF kütüphanesi yüklenemedi.');
     return;
@@ -117,7 +133,17 @@ function exportTransactionsPdf(range = 'all') {
   }
 
   const { jsPDF } = window.jspdf;
+  let fontData;
+  try {
+    fontData = await loadPdfFont();
+  } catch (error) {
+    showToast('PDF fontu yüklenemedi. İnternet bağlantınızı kontrol edin.');
+    return;
+  }
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  doc.addFileToVFS('NotoSans.ttf', fontData);
+  doc.addFont('NotoSans.ttf', 'NotoSans', 'normal');
+  doc.setFont('NotoSans', 'normal');
   const pageWidth = doc.internal.pageSize.getWidth();
   const rangeLabelMap = { all: 'Tüm zamanlar', month: 'Son 1 ay', custom: 'İstediğim tarih aralığı', current: 'Geçerli filtre' };
   const typeLabelMap = { income: 'Gelir', expense: 'Gider' };
@@ -125,10 +151,10 @@ function exportTransactionsPdf(range = 'all') {
   doc.setFillColor(16, 17, 25);
   doc.rect(0, 0, pageWidth, 60, 'F');
   doc.setTextColor(244, 245, 247);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('NotoSans', 'normal');
   doc.setFontSize(18);
   doc.text('Ledgerly - İşlem Raporu', 40, 32);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('NotoSans', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(186, 191, 204);
   doc.text(`Dönem: ${rangeLabelMap[range] || 'Tüm zamanlar'}`, 40, 48);
@@ -151,22 +177,38 @@ function exportTransactionsPdf(range = 'all') {
     startY: 76,
     theme: 'grid',
     styles: {
+      font: 'NotoSans',
+      fontStyle: 'normal',
       fontSize: 8,
       textColor: [30, 30, 30],
       lineColor: [220, 224, 232],
       lineWidth: 0.3,
-      overflow: 'linebreak'
+      overflow: 'linebreak',
+      cellPadding: 5,
+      valign: 'middle'
     },
     headStyles: {
       fillColor: [89, 216, 255],
       textColor: [12, 14, 20],
-      fontStyle: 'bold'
+      font: 'NotoSans',
+      fontStyle: 'normal'
     },
     bodyStyles: {
-      fillColor: [255, 255, 255]
+      fillColor: [255, 255, 255],
+      font: 'NotoSans'
     },
     alternateRowStyles: {
-      fillColor: [246, 248, 251]
+      fillColor: [246, 248, 251],
+      font: 'NotoSans'
+    },
+    columnStyles: {
+      0: { cellWidth: 28, halign: 'center' },
+      1: { cellWidth: 48 },
+      2: { cellWidth: 150 },
+      3: { cellWidth: 78 },
+      4: { cellWidth: 66 },
+      5: { cellWidth: 52 },
+      6: { cellWidth: 78, halign: 'right' }
     },
     margin: { left: 40, right: 40 },
     didParseCell: (data) => {
@@ -183,10 +225,10 @@ function exportTransactionsPdf(range = 'all') {
   const net = totalIncome - totalExpense;
   const summaryY = doc.lastAutoTable.finalY + 18;
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('NotoSans', 'normal');
   doc.setFontSize(11);
   doc.text('Özet', 40, summaryY);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('NotoSans', 'normal');
   doc.setFontSize(10);
   doc.text(`Toplam gelir: ${money(totalIncome)}`, 40, summaryY + 18);
   doc.text(`Toplam gider: ${money(totalExpense)}`, 40, summaryY + 32);
